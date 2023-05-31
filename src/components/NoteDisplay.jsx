@@ -35,7 +35,7 @@ export default function NoteDisplay(props){
 				<h4>{localNote.title}</h4>
 				<p>{localNote.description}</p>
 				<p>{localNote.isCompleted ? "COMPLETE" : "NOT YET DONE"}</p>
-				<input type="checkbox" disabled="disabled" readOnly value={localNote.isCompleted} />
+				<input type="checkbox" disabled="disabled" readOnly checked={localNote.isCompleted} value={localNote.isCompleted} />
 				<h5>Due Date: {new Date(localNote.dueDate).toLocaleDateString()}</h5>
 				{/* <input type="date" readOnly value={note.dueDate} /> */}
 				<h5>Created At: {new Date(localNote.createdAtDate).toLocaleDateString()}</h5>
