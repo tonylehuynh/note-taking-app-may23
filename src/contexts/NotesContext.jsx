@@ -1,4 +1,5 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
+import { useLocalStorage } from "react-use";
 
 
 const initialNotesData = [
@@ -16,6 +17,14 @@ const initialNotesData = [
 // should be done through a reducer
 
 // Goal of a reducer is to have all of state management happen in a single place
+
+/**
+ * Reducer runs automatically when a dispatch function is called.
+ * instructions.type determines _how_ we edit the state
+ * The reducer must return someting, otherwise state is set to null. 
+ * Whatever is returned, is the new state. 
+ * @returns New state, edited based on instructions provided.
+ */
 
 const notesReducer = (previousState, instructions) => {
 	let stateEditable = [...previousState];
@@ -49,23 +58,62 @@ const notesReducer = (previousState, instructions) => {
 }
 
 
-
+// Basically how we make our data globally available
+// This is how we make our reducer state and reducer dispatch global
 export const NoteDataContext = createContext(null);
 export const NoteDispatchContext = createContext(null);
 
 
-// Custom hooks need the word use at the front
+// Custom hooks need the word 'use' at the front
+// Custom hooks that just provide direct access to one part of the reducer 
+// We can use these in our other components depending on what we want to do to it
+// - If we want to list all the notes, we use the useNoteData() hook
+// - If we want to change some of the notes, we use the useNoteDispatch() hook
+
+// e.g. read-only data:
 export function useNoteData(){
 	return useContext(NoteDataContext);
 }
-
+// function to modify the data:
 export function useNoteDispatch(){
 	return useContext(NoteDispatchContext);
 }
 
+
 // Provider
+// This component here wraps around the component tree
+
+/**
+ * NotesProvider wraps around the component tree. 
+ * Any child component has access to this note data via useNoteData and useNoteDispatch.
+ * @param {*} props props.children should be a JSX element. This NotesProvider wraps around that element. 
+ */
 export default function NotesProvider(props){
+
+	//    [readOnlyData, functionToModifyData] = useReducer(functionToModifyData (this is the reducer function), initialDefaultData)
 	const [notesData, notesDispatch] = useReducer(notesReducer, initialNotesData)
+
+	//   [readOnlyLocalStorageData. functionToUpdateLocalStorage] = useLocalStorage(keyInLocalStorage, defaultDataIfKeyIsNotFound)
+	const [persistentData, setPersistentData] = useLocalStorage('notes', initialNotesData);
+
+
+	useEffect(() => {
+		// On app start, overwrite notesData with persistentData
+		// notesDispatch()
+	}, []);
+
+	// Dev: confirm that our local storage is updating 
+	useEffect(() => {
+		console.log("Local Storage: " + persistentData)
+	}, [persistentData]);
+
+	// If something changes our notesData, e.g. if the dispatch function runs
+	// then update the copy of data saved in the local storage
+	// ** Autosave any changes to notes from reducer state into local storage. 
+	// It's pretty much an autosave as opposed to a hardcoded specific save.
+	useEffect(() => {
+		setPersistentData(notesData);
+	}, [notesData]);
 
 	return (
 		<NoteDataContext.Provider value={notesData}>
