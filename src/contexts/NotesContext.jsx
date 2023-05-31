@@ -8,7 +8,7 @@ const initialNotesData = [
 		title: "Welcome to the Note Taker!",
 		description: "Make your notes here!",
 		isCompleted: false,
-		duedate: new Date().setDate(new Date().getDate() + 1), // Current date but one day in the future
+		dueDate: new Date().setDate(new Date().getDate() + 1), // Current date but one day in the future
 		createdAtDate: Date.now()
 	}
 ]
@@ -37,7 +37,8 @@ const notesReducer = (previousState, instructions) => {
 			console.log("Apply persistent data to state now");
 
 			// instructions.data is provided when the dispatch function is called
-			stateEditable = instructions.data;
+			let localStorageData = instructions.data
+			stateEditable = localStorageData;
 
 			// Whatever is returned is now the newest version of state
 			return stateEditable;
