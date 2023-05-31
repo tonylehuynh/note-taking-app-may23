@@ -49,7 +49,7 @@ const notesReducer = (previousState, instructions) => {
 			stateEditable.push(newNote);
 			
 			return stateEditable;
-			
+
 		case "update":
 			console.log("TODO: Update specific note and overwrite it in state");
 			break;
@@ -117,6 +117,7 @@ export default function NotesProvider(props){
 	useEffect(() => {
 		// On app start, overwrite notesData with persistentData
 		notesDispatch({type:"setup", data: persistentData});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	// Dev: confirm that our local storage is updating 
@@ -130,6 +131,7 @@ export default function NotesProvider(props){
 	// It's pretty much an autosave as opposed to a hardcoded specific save.
 	useEffect(() => {
 		setPersistentData(notesData);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [notesData]);
 
 	return (
