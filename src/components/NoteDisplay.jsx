@@ -1,20 +1,24 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNoteData } from "../contexts/NotesContext";
 
 
 export default function NoteDisplay(props){
 
 	const {id} = props;
-	let note = {};
+	const [localNote, setLocalNote] = useState({});
 
 	const globalNotesData = useNoteData();
 
-	// On start, find the note in globalNotesData
-	// that has an ID matching props.id
+	useEffect(() => {
+		// On start, find the note in globalNotesData
+		// that has an ID matching props.id
 
-	note = globalNotesData.filter(note => {
-		return note.id === id;
-	})
+		setLocalNote(globalNotesData.find(globalSpecificNote => {
+			return globalSpecificNote.id === id;
+		}));
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalNotesData, id])
+	
 
 	return (
 		<div>
@@ -24,13 +28,13 @@ export default function NoteDisplay(props){
 				- isCompleted (boolean)
 				- due date (JS Date)
 				- created at date (JS Date) */}
-				<h4>{note.title}</h4>
-				<p>{note.description}</p>
-				<p>{note.isCompleted ? "COMPLETE" : "NOT YET DONE"}</p>
-				<input type="checkbox" disabled="disabled" readOnly value={note.isCompleted} />
-				<h5>Due Date: {new Date(note.dueDate).toLocaleDateString()}</h5>
+				<h4>{localNote.title}</h4>
+				<p>{localNote.description}</p>
+				<p>{localNote.isCompleted ? "COMPLETE" : "NOT YET DONE"}</p>
+				<input type="checkbox" disabled="disabled" readOnly value={localNote.isCompleted} />
+				<h5>Due Date: {new Date(localNote.dueDate).toLocaleDateString()}</h5>
 				{/* <input type="date" readOnly value={note.dueDate} /> */}
-				<h5>Created At: {new Date(note.createdAtDate).toLocaleDateString()}</h5>
+				<h5>Created At: {new Date(localNote.createdAtDate).toLocaleDateString()}</h5>
 				{/* <input type="datetime-local" readOnly value={note.createdAtDate}/> */}
 		</div>
 	)
