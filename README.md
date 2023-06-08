@@ -1,5 +1,6 @@
 # Note Taking React App
 
+DEPLOYED SITE: https://react-practice-notetaking.netlify.app/
 
 ## General Plan 
 - Note taking app 
